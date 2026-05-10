@@ -4,7 +4,7 @@ Standalone Laravel ticket-system. Livewire-driven kanban + list board, AI-assist
 
 [![CI](https://github.com/EmpireTwo/gaze-ticketsystem/actions/workflows/ci.yml/badge.svg)](https://github.com/EmpireTwo/gaze-ticketsystem/actions/workflows/ci.yml)
 [![Latest Version](https://img.shields.io/packagist/v/empire2/gaze-ticketsystem.svg)](https://packagist.org/packages/empire2/gaze-ticketsystem)
-[![License](https://img.shields.io/packagist/l/empire2/gaze-ticketsystem.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/EmpireTwo/gaze-ticketsystem.svg)](LICENSE)
 
 The package ships:
 
