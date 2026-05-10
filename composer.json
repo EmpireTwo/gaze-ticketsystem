@@ -53,7 +53,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Empire2\\GazeTicketsystem\\": "src/"
+            "Empire2\\GazeTicketsystem\\": "src/",
+            "Empire2\\GazeTicketsystem\\Database\\Factories\\": "database/factories/",
+            "Empire2\\GazeTicketsystem\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
@@ -81,6 +83,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
+            "empiretwo/gaze-laravel": true,
             "pestphp/pest-plugin": true
         }
     }

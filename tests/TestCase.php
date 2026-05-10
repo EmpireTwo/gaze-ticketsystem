@@ -54,8 +54,56 @@ abstract class TestCase extends Orchestra
     {
         $this->createUsersTable();
         $this->createNotificationsTable();
+        $this->createActivityLogTable();
+        $this->createMediaTable();
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->artisan('migrate', ['--database' => 'testing'])->run();
+    }
+
+    private function createActivityLogTable(): void
+    {
+        if (Schema::hasTable('activity_log')) {
+            return;
+        }
+
+        Schema::create('activity_log', function (Blueprint $table): void {
+            $table->bigIncrements('id');
+            $table->string('log_name')->nullable();
+            $table->text('description');
+            $table->nullableMorphs('subject', 'subject');
+            $table->string('event')->nullable();
+            $table->nullableMorphs('causer', 'causer');
+            $table->json('properties')->nullable();
+            $table->uuid('batch_uuid')->nullable();
+            $table->timestamps();
+            $table->index('log_name');
+        });
+    }
+
+    private function createMediaTable(): void
+    {
+        if (Schema::hasTable('media')) {
+            return;
+        }
+
+        Schema::create('media', function (Blueprint $table): void {
+            $table->bigIncrements('id');
+            $table->morphs('model');
+            $table->uuid('uuid')->nullable()->unique();
+            $table->string('collection_name');
+            $table->string('name');
+            $table->string('file_name');
+            $table->string('mime_type')->nullable();
+            $table->string('disk');
+            $table->string('conversions_disk')->nullable();
+            $table->unsignedBigInteger('size');
+            $table->json('manipulations');
+            $table->json('custom_properties');
+            $table->json('generated_conversions');
+            $table->json('responsive_images');
+            $table->unsignedInteger('order_column')->nullable()->index();
+            $table->timestamps();
+        });
     }
 
     private function createUsersTable(): void
