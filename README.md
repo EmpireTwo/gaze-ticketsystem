@@ -17,7 +17,7 @@ The package ships:
 
 ## Requirements
 
-- PHP `^8.2`
+- PHP `^8.3` (`laravel/ai` requires PHP 8.3+)
 - Laravel `^12.0` (`laravel/ai` requires Laravel 12+)
 - Livewire `^4.0`
 - `empiretwo/gaze-laravel` (auto-installed)
