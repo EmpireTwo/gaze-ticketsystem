@@ -27,25 +27,15 @@ The package ships:
 
 ## Install
 
-`empiretwo/gaze-laravel` is on Packagist. `empire2/gaze-ticketsystem` is not yet — add a VCS repository to your host app's `composer.json` until it lands on Packagist:
-
-```json
-"repositories": [
-    { "type": "vcs", "url": "https://github.com/EmpireTwo/gaze-ticketsystem.git" }
-],
-"minimum-stability": "dev",
-"prefer-stable": true
-```
-
-Then:
-
 ```bash
-composer require empire2/gaze-ticketsystem:dev-main
+composer require empire2/gaze-ticketsystem
 
 php artisan vendor:publish --tag=gaze-ticketsystem-config
 php artisan vendor:publish --tag=gaze-ticketsystem-migrations
 php artisan migrate
 ```
+
+Composer will pull `empiretwo/gaze-laravel` automatically; the gaze CLI binary is downloaded into `vendor/bin/gaze` by its bundled installer plugin (Composer asks you to trust the plugin once).
 
 Optional:
 

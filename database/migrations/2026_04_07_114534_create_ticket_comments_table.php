@@ -28,7 +28,7 @@ return new class extends Migration
                 Schema::table('ticket_comments', function (Blueprint $table) use ($userTable): void {
                     $table->foreign('user_id')->references('id')->on($userTable)->nullOnDelete();
                 });
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // Some DB drivers (e.g. SQLite in older Laravel) reject FK alters
                 // after table creation. Column stays nullable, no FK enforced.
             }

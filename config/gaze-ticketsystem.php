@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
 use Empire2\GazeTicketsystem\Sources\GhostwriterSourceResolver;
 
 return [
@@ -27,7 +28,7 @@ return [
     | \Illuminate\Contracts\Auth\Authenticatable.
     |
     */
-    'user_model' => env('GAZE_TICKETSYSTEM_USER_MODEL', \App\Models\User::class),
+    'user_model' => env('GAZE_TICKETSYSTEM_USER_MODEL', User::class),
 
     /*
     |--------------------------------------------------------------------------

@@ -63,7 +63,7 @@ return new class extends Migration
                     $table->foreign('assigned_to')->references('id')->on($userTable)->nullOnDelete();
                     $table->foreign('created_by')->references('id')->on($userTable)->nullOnDelete();
                 });
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // Some DB drivers (e.g. SQLite in older Laravel) reject FK alters
                 // after table creation. Silently skip; the column stays nullable.
             }
@@ -74,7 +74,7 @@ return new class extends Migration
                 Schema::table('tickets', function (Blueprint $table) use ($customerTable): void {
                     $table->foreign('customer_id')->references('id')->on($customerTable)->nullOnDelete();
                 });
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // see above
             }
         }

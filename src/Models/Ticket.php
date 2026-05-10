@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Empire2\GazeTicketsystem\Models;
 
+use App\Models\User;
 use Empire2\GazeTicketsystem\Contracts\TicketSourceResolver;
 use Empire2\GazeTicketsystem\Database\Factories\TicketFactory;
 use Empire2\GazeTicketsystem\Enums\Priority;
@@ -237,6 +238,6 @@ class Ticket extends Model implements HasMedia
             return $model;
         }
 
-        return \App\Models\User::class;
+        return User::class;
     }
 }

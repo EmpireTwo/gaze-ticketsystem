@@ -8,6 +8,8 @@ use Empire2\GazeTicketsystem\GazeTicketsystemServiceProvider;
 use Empire2\GazeTicketsystem\Tests\Fixtures\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Laravel\Ai\AiServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Naoray\GazeLaravel\EncryptedBlob;
 use Naoray\GazeLaravel\Facades\Gaze;
 use Naoray\GazeLaravel\GazeServiceProvider;
@@ -21,11 +23,11 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            \Laravel\Ai\AiServiceProvider::class,
+            AiServiceProvider::class,
             ActivitylogServiceProvider::class,
             MediaLibraryServiceProvider::class,
             GazeServiceProvider::class,
-            \Livewire\LivewireServiceProvider::class,
+            LivewireServiceProvider::class,
             GazeTicketsystemServiceProvider::class,
         ];
     }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use Empire2\GazeTicketsystem\Tests\TestCase;
 
-uses(\Empire2\GazeTicketsystem\Tests\TestCase::class)
+uses(TestCase::class)
     ->in('Feature', 'Unit');

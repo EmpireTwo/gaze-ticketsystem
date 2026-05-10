@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Empire2\GazeTicketsystem\Sources;
 
 use Empire2\GazeTicketsystem\Contracts\TicketSourceResolver;
+use Illuminate\Support\Facades\Route;
 use Throwable;
 
 /**
@@ -95,7 +96,7 @@ final class GhostwriterSourceResolver implements TicketSourceResolver
 
         $url = null;
         try {
-            if (\Illuminate\Support\Facades\Route::has(self::ROUTE_NAME)) {
+            if (Route::has(self::ROUTE_NAME)) {
                 $url = (string) route(self::ROUTE_NAME, $sourceId);
             }
         } catch (Throwable) {

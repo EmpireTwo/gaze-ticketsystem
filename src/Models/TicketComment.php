@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Empire2\GazeTicketsystem\Models;
 
+use App\Models\User;
 use Empire2\GazeTicketsystem\Database\Factories\TicketCommentFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,7 +76,7 @@ class TicketComment extends Model implements HasMedia
     public function author(): BelongsTo
     {
         /** @var class-string<Model> $model */
-        $model = config('gaze-ticketsystem.user_model', \App\Models\User::class);
+        $model = config('gaze-ticketsystem.user_model', User::class);
 
         return $this->belongsTo($model, 'user_id');
     }
