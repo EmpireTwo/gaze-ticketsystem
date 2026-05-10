@@ -8,7 +8,7 @@ Standalone Laravel ticket-system. Livewire-driven kanban + list board, AI-assist
 
 The package ships:
 
-- A `tickets` URL prefix with kanban + list + split detail-panel views (Livewire 3).
+- A `tickets` URL prefix with kanban + list + split detail-panel views (Livewire 4).
 - `Ticket`, `TicketComment`, `TicketStatus`, `TicketType` Eloquent models with auto-generated `TK-YYYYMM-NNNNN` numbers, Spatie activity log + media library integration.
 - A `TicketAiAnalysisService` driven by `laravel/ai` agents, with overridable prompt templates.
 - A `gaze-ticketsystem:check-follow-ups` command (alias `ticket:check-follow-ups`) and an opt-in hourly schedule.
