@@ -15,13 +15,6 @@ use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->createUsersTable();
-    }
-
     protected function getPackageProviders($app): array
     {
         return [
@@ -45,6 +38,7 @@ abstract class TestCase extends Orchestra
         // Point the package at the in-package fixture User so tests have a
         // concrete Authenticatable to rely on.
         $app['config']->set('gaze-ticketsystem.user_model', User::class);
+        $app['config']->set('auth.providers.users.model', User::class);
 
         // Spatie media library demands a disk; pick the local public disk.
         $app['config']->set('filesystems.disks.public', [
@@ -58,7 +52,8 @@ abstract class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadLaravelMigrations(); // sets up notifications etc.
+        $this->createUsersTable();
+        $this->createNotificationsTable();
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->artisan('migrate', ['--database' => 'testing'])->run();
     }
@@ -75,6 +70,22 @@ abstract class TestCase extends Orchestra
             $table->string('email')->unique();
             $table->string('password')->nullable();
             $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+
+    private function createNotificationsTable(): void
+    {
+        if (Schema::hasTable('notifications')) {
+            return;
+        }
+
+        Schema::create('notifications', function (Blueprint $table): void {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }
