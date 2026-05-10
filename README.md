@@ -182,6 +182,33 @@ $ticket = Ticket::create([
 
 Then visit `/tickets` for the kanban board, `/tickets/{ticket}` for the split view, and `/tickets/settings` to manage statuses + types.
 
+## Privacy boundaries
+
+This package routes every text prompt and structured LLM response through
+the [`empiretwo/gaze-laravel`](https://packagist.org/packages/empiretwo/gaze-laravel)
+boundary. With `gaze_enabled=true` (config key
+`gaze-ticketsystem.ai.gaze_enabled`, env `GAZE_TICKETSYSTEM_GAZE_ENABLED`),
+prompts are passed through `gaze clean` before they reach the model, and
+the `restore` step puts placeholder tokens back into the model output
+before persistence. With `gaze_enabled=false` (default), the
+`GuardedAgentRunner` short-circuits with `GazeDisabledException` — there is
+no bypass branch, all three AI entry points (`analyzeRaw`, `analyze`,
+`replyToComment`) fail closed.
+
+**Image attachments are NOT redacted.** Gaze is a text-only boundary.
+Ticket screenshots and other image attachments are sent to the configured
+AI provider as-is. Each AI call with non-empty attachments emits a
+`Log::warning('gaze-ticketsystem AI call with un-redactable image
+attachments', ['ticket_id' => ..., 'count' => N])` so operators can audit
+out-of-band PII exposure. Treat image upload as out-of-band PII exposure
+and disable image attachments if your compliance posture forbids it.
+
+**Embeddings:** this package does not generate embeddings — it only sends
+text prompts (with optional images) to a structured-output agent. If you
+add embedding paths in a downstream extension, route the input text
+through `Gaze::clean()` only (no restore) and skip the call when
+`gaze_enabled=false` (fail-closed).
+
 ## Console commands
 
 ```bash

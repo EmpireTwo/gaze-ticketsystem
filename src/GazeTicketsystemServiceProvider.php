@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Empire2\GazeTicketsystem;
 
+use Empire2\GazeTicketsystem\Ai\Contracts\GuardedAgentRunnerContract;
+use Empire2\GazeTicketsystem\Ai\GuardedAgentRunner;
 use Empire2\GazeTicketsystem\Console\Commands\CheckTicketFollowUpsCommand;
 use Empire2\GazeTicketsystem\Contracts\TicketSourceResolver;
 use Empire2\GazeTicketsystem\Livewire\Admin\TicketBoard;
@@ -25,6 +27,8 @@ class GazeTicketsystemServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/gaze-ticketsystem.php', 'gaze-ticketsystem');
+
+        $this->app->bind(GuardedAgentRunnerContract::class, GuardedAgentRunner::class);
 
         $this->app->singleton(TicketSourceResolver::class, function (Container $app): TicketSourceResolver {
             /** @var array<string, class-string<TicketSourceResolver>> $map */

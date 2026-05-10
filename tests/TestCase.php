@@ -8,7 +8,10 @@ use Empire2\GazeTicketsystem\GazeTicketsystemServiceProvider;
 use Empire2\GazeTicketsystem\Tests\Fixtures\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Naoray\GazeLaravel\EncryptedBlob;
+use Naoray\GazeLaravel\Facades\Gaze;
 use Naoray\GazeLaravel\GazeServiceProvider;
+use Naoray\GazeLaravel\GazeSession;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\MediaLibrary\MediaLibraryServiceProvider;
@@ -18,6 +21,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            \Laravel\Ai\AiServiceProvider::class,
             ActivitylogServiceProvider::class,
             MediaLibraryServiceProvider::class,
             GazeServiceProvider::class,
@@ -35,6 +39,16 @@ abstract class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
+        // Default the Gaze boundary ON in tests; individual tests still
+        // call `Gaze::fake(...)` to install a deterministic clean/restore
+        // pair via setUp(). Tests that need the boundary OFF flip the flag
+        // locally to assert fail-closed behaviour.
+        $app['config']->set('gaze-ticketsystem.ai.gaze_enabled', true);
+
+        // Tests assert that recorded GazeInvocation argv[0] equals
+        // config('gaze.binary'); set a deterministic value.
+        $app['config']->set('gaze.binary', 'gaze');
+
         // Point the package at the in-package fixture User so tests have a
         // concrete Authenticatable to rely on.
         $app['config']->set('gaze-ticketsystem.user_model', User::class);
@@ -48,6 +62,25 @@ abstract class TestCase extends Orchestra
             'visibility' => 'public',
         ]);
         $app['config']->set('media-library.disk_name', 'public');
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Install a default Gaze fake so the GuardedAgentRunner has a
+        // deterministic clean/restore pair when tests do not provide
+        // their own. Identity restore preserves the LLM response as-is.
+        // Tests can call Gaze::fake(...) again to override with their
+        // own clean/restore handlers.
+        Gaze::fake(
+            cleanHandler: fn (string $text): GazeSession => new GazeSession(
+                cleanText: $text,
+                ciphertext: EncryptedBlob::wrap('test-blob'),
+                detections: 0,
+            ),
+            restoreHandler: fn (GazeSession $session, string $text): string => $text,
+        );
     }
 
     protected function defineDatabaseMigrations(): void

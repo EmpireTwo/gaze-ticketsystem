@@ -109,7 +109,12 @@ return [
     'ai' => [
         'enabled' => env('GAZE_TICKETSYSTEM_AI_ENABLED', true),
         'analysis_model' => env('GAZE_TICKETSYSTEM_AI_MODEL', 'gpt-4o-mini'),
-        'gaze_enabled' => env('GAZE_TICKETSYSTEM_GAZE_ENABLED', true),
+        // Gaze (PII boundary) integration. Default false → GuardedAgentRunner
+        // fails closed and refuses to invoke the LLM. Set to true once the
+        // host has configured the gaze CLI / NER assets and accepts the
+        // text-only redaction trade-off (image attachments are NOT redacted —
+        // see TicketAiAnalysisService docblock and README).
+        'gaze_enabled' => env('GAZE_TICKETSYSTEM_GAZE_ENABLED', false),
     ],
 
     /*

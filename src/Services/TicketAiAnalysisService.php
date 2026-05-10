@@ -6,15 +6,30 @@ namespace Empire2\GazeTicketsystem\Services;
 
 use Empire2\GazeTicketsystem\Agents\TicketAnalysisAgent;
 use Empire2\GazeTicketsystem\Agents\TicketCommentReplyAgent;
+use Empire2\GazeTicketsystem\Ai\Contracts\GuardedAgentRunnerContract;
+use Empire2\GazeTicketsystem\Ai\DTO\GuardedAgentResponse;
+use Empire2\GazeTicketsystem\Ai\Exceptions\GazeDisabledException;
 use Empire2\GazeTicketsystem\Models\Ticket;
 use Empire2\GazeTicketsystem\Models\TicketComment;
 use Empire2\GazeTicketsystem\Prompts\PromptResolver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Laravel\Ai\Files\Image;
-use Laravel\Ai\Responses\StructuredAgentResponse;
+use Naoray\GazeLaravel\Exceptions\GazeUnknownTokenException;
 use Throwable;
 
+/**
+ * Wraps every outbound LLM call (analysis + reply generation) in a
+ * Gaze::clean() / Gaze::restore() pair via the GuardedAgentRunner.
+ *
+ * IMAGE ATTACHMENTS ARE NOT REDACTED. Gaze is a text-only boundary; ticket
+ * screenshots and other image attachments are forwarded to the AI provider
+ * as-is. Each AI call with non-empty attachments emits a `Log::warning`
+ * with the ticket id (when available) so the operator can audit out-of-band
+ * PII exposure. Hosts whose compliance posture forbids this should disable
+ * image upload entirely or set `gaze-ticketsystem.ai.gaze_enabled=false`
+ * which fails the call closed.
+ */
 class TicketAiAnalysisService
 {
     private const array IMAGE_MIME_TYPES = [
@@ -25,6 +40,7 @@ class TicketAiAnalysisService
     ];
 
     public function __construct(
+        private readonly GuardedAgentRunnerContract $runner,
         private readonly PromptResolver $promptResolver = new PromptResolver,
     ) {}
 
@@ -65,20 +81,11 @@ class TicketAiAnalysisService
             $imagePaths,
         );
 
-        try {
-            $response = $agent->prompt(
-                $userPrompt,
-                attachments: $attachments,
-                provider: $this->resolveProvider(),
-                model: $this->resolveModel(),
-            );
-        } catch (Throwable $e) {
-            Log::error('Ticket AI pre-analysis failed', ['error' => $e->getMessage()]);
+        $this->warnAboutAttachments($attachments, ticketId: null);
 
-            return null;
-        }
+        $response = $this->runGuarded($agent, $userPrompt, $attachments, context: ['stage' => 'analyze_raw']);
 
-        if (! $response instanceof StructuredAgentResponse) {
+        if ($response === null || $response->structured === null) {
             return null;
         }
 
@@ -103,23 +110,16 @@ class TicketAiAnalysisService
 
         $attachments = $this->buildImageAttachments($ticket);
 
-        try {
-            $response = $agent->prompt(
-                $userPrompt,
-                attachments: $attachments,
-                provider: $this->resolveProvider(),
-                model: $this->resolveModel(),
-            );
-        } catch (Throwable $e) {
-            Log::error('Ticket AI analysis failed', [
-                'ticket_id' => $ticket->id,
-                'error' => $e->getMessage(),
-            ]);
+        $this->warnAboutAttachments($attachments, ticketId: $ticket->id);
 
-            return null;
-        }
+        $response = $this->runGuarded(
+            $agent,
+            $userPrompt,
+            $attachments,
+            context: ['stage' => 'analyze', 'ticket_id' => $ticket->id],
+        );
 
-        if (! $response instanceof StructuredAgentResponse) {
+        if ($response === null || $response->structured === null) {
             return null;
         }
 
@@ -164,24 +164,20 @@ class TicketAiAnalysisService
 
         $attachments = $this->buildImageAttachments($ticket);
 
-        try {
-            $response = $agent->prompt(
-                $userPrompt,
-                attachments: $attachments,
-                provider: $this->resolveProvider(),
-                model: $this->resolveModel(),
-            );
-        } catch (Throwable $e) {
-            Log::error('Ticket AI reply failed', [
-                'ticket_id' => $ticket->id,
-                'comment_id' => $comment->id,
-                'error' => $e->getMessage(),
-            ]);
+        $this->warnAboutAttachments($attachments, ticketId: $ticket->id);
 
+        $response = $this->runGuarded(
+            $agent,
+            $userPrompt,
+            $attachments,
+            context: ['stage' => 'reply', 'ticket_id' => $ticket->id, 'comment_id' => $comment->id],
+        );
+
+        if ($response === null) {
             return null;
         }
 
-        $body = (string) $response;
+        $body = $response->text;
 
         if (trim($body) === '') {
             return null;
@@ -191,6 +187,55 @@ class TicketAiAnalysisService
             'user_id' => Auth::id(),
             'body' => $body,
             'is_ai_response' => true,
+        ]);
+    }
+
+    /**
+     * @param  list<Image>  $attachments
+     * @param  array<string, mixed>  $context
+     */
+    private function runGuarded(
+        TicketAnalysisAgent|TicketCommentReplyAgent $agent,
+        string $userPrompt,
+        array $attachments,
+        array $context,
+    ): ?GuardedAgentResponse {
+        try {
+            return $this->runner->run(
+                agent: $agent,
+                message: $userPrompt,
+                options: [
+                    'provider' => $this->resolveProvider(),
+                    'model' => $this->resolveModel(),
+                    'attachments' => $attachments,
+                ],
+            );
+        } catch (GazeDisabledException|GazeUnknownTokenException $e) {
+            // Fail-closed: surface the disabled-boundary signal to the caller
+            // (controllers / Livewire components) so they can render a clear
+            // error instead of silently dropping the analysis.
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Ticket AI call failed', array_merge($context, [
+                'error' => $e->getMessage(),
+            ]));
+
+            return null;
+        }
+    }
+
+    /**
+     * @param  list<Image>  $attachments
+     */
+    private function warnAboutAttachments(array $attachments, ?int $ticketId): void
+    {
+        if ($attachments === []) {
+            return;
+        }
+
+        Log::warning('gaze-ticketsystem AI call with un-redactable image attachments', [
+            'ticket_id' => $ticketId,
+            'count' => count($attachments),
         ]);
     }
 
