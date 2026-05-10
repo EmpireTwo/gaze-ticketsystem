@@ -1,0 +1,87 @@
+{
+    "name": "empire2/gaze-ticketsystem",
+    "description": "Standalone Laravel ticket-system package extracted from EmpireTwo/Dashboard. Livewire-driven kanban/list board, AI analysis, follow-ups, notifications, and an optional ghostwriter integration via source resolvers.",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "livewire",
+        "tickets",
+        "support",
+        "helpdesk",
+        "kanban",
+        "ai",
+        "gaze"
+    ],
+    "homepage": "https://github.com/EmpireTwo/gaze-ticketsystem",
+    "support": {
+        "issues": "https://github.com/EmpireTwo/gaze-ticketsystem/issues",
+        "source": "https://github.com/EmpireTwo/gaze-ticketsystem"
+    },
+    "authors": [
+        {
+            "name": "Markus Gottschau",
+            "email": "hello@lordeagle.ie",
+            "homepage": "https://github.com/EmpireTwo"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*",
+        "illuminate/console": "^11.0|^12.0",
+        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/notifications": "^11.0|^12.0",
+        "illuminate/queue": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0",
+        "laravel/ai": "^0.4.3",
+        "livewire/livewire": "^3.5",
+        "naoray/gaze-laravel": "dev-main",
+        "spatie/laravel-activitylog": "^4.8",
+        "spatie/laravel-medialibrary": "^11.3"
+    },
+    "require-dev": {
+        "larastan/larastan": "^2.9|^3.0",
+        "laravel/pint": "^1.17",
+        "orchestra/testbench": "^9.0|^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "phpstan/phpstan": "^1.11"
+    },
+    "suggest": {
+        "empire2/gaze-ghostwriter": "Installs the ghostwriter package so support drafts can be turned into tickets via the source_resolvers config."
+    },
+    "autoload": {
+        "psr-4": {
+            "Empire2\\GazeTicketsystem\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Empire2\\GazeTicketsystem\\Tests\\": "tests/"
+        },
+        "files": [
+            "tests/Feature/ticketing-helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Empire2\\GazeTicketsystem\\GazeTicketsystemServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "analyse": "phpstan analyse",
+        "format": "pint"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
