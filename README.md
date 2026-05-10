@@ -18,7 +18,7 @@ The package ships:
 ## Requirements
 
 - PHP `^8.2`
-- Laravel `^11.0 || ^12.0`
+- Laravel `^12.0` (`laravel/ai` requires Laravel 12+)
 - Livewire `^3.5`
 - `naoray/gaze-laravel` (auto-installed)
 - `spatie/laravel-activitylog` `^4.8`
@@ -27,8 +27,21 @@ The package ships:
 
 ## Install
 
+`naoray/gaze-laravel` and `empire2/gaze-ticketsystem` are not yet on Packagist, so add VCS repositories to your host app's `composer.json` first:
+
+```json
+"repositories": [
+    { "type": "vcs", "url": "https://github.com/EmpireTwo/gaze-laravel.git" },
+    { "type": "vcs", "url": "https://github.com/EmpireTwo/gaze-ticketsystem.git" }
+],
+"minimum-stability": "dev",
+"prefer-stable": true
+```
+
+Then:
+
 ```bash
-composer require empire2/gaze-ticketsystem
+composer require empire2/gaze-ticketsystem:dev-main
 
 php artisan vendor:publish --tag=gaze-ticketsystem-config
 php artisan vendor:publish --tag=gaze-ticketsystem-migrations

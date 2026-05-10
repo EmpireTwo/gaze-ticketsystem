@@ -28,12 +28,12 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
-        "illuminate/console": "^11.0|^12.0",
-        "illuminate/contracts": "^11.0|^12.0",
-        "illuminate/database": "^11.0|^12.0",
-        "illuminate/notifications": "^11.0|^12.0",
-        "illuminate/queue": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0",
+        "illuminate/console": "^12.0",
+        "illuminate/contracts": "^12.0",
+        "illuminate/database": "^12.0",
+        "illuminate/notifications": "^12.0",
+        "illuminate/queue": "^12.0",
+        "illuminate/support": "^12.0",
         "laravel/ai": "^0.4.3",
         "livewire/livewire": "^3.5",
         "naoray/gaze-laravel": "dev-main",
@@ -41,13 +41,19 @@
         "spatie/laravel-medialibrary": "^11.3"
     },
     "require-dev": {
-        "larastan/larastan": "^2.9|^3.0",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.17",
-        "orchestra/testbench": "^9.0|^10.0",
+        "orchestra/testbench": "^10.0",
         "pestphp/pest": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
-        "phpstan/phpstan": "^1.11"
+        "phpstan/phpstan": "^2.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/EmpireTwo/gaze-laravel.git"
+        }
+    ],
     "suggest": {
         "empire2/gaze-ghostwriter": "Installs the ghostwriter package so support drafts can be turned into tickets via the source_resolvers config."
     },
