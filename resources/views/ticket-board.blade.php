@@ -75,7 +75,7 @@
     <div x-data="{ open: false }" x-on:open-create-modal.window="open = true" x-on:ticket-created.window="open = false">
         <div x-show="open" x-cloak class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" @click.self="open = false">
             <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-5">
-                <livewire:gaze-ticketsystem::ticket-create-modal />
+                <livewire:gaze-ticketsystem.ticket-create-modal />
             </div>
         </div>
     </div>

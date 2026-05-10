@@ -1,6 +1,6 @@
 # Gaze Ticketsystem
 
-Standalone Laravel ticket-system extracted from EmpireTwo/Dashboard. Livewire-driven kanban + list board, AI-assisted ticket analysis, follow-up reminders, notifications, and a soft optional integration with [`empire2/gaze-ghostwriter`](https://github.com/EmpireTwo/gaze-ghostwriter) for turning support drafts into tickets.
+Standalone Laravel ticket-system. Livewire-driven kanban + list board, AI-assisted ticket analysis, follow-up reminders, notifications, and a soft optional integration with [`empire2/gaze-ghostwriter`](https://github.com/EmpireTwo/gaze-ghostwriter) for turning support drafts into tickets.
 
 [![CI](https://github.com/EmpireTwo/gaze-ticketsystem/actions/workflows/ci.yml/badge.svg)](https://github.com/EmpireTwo/gaze-ticketsystem/actions/workflows/ci.yml)
 [![Latest Version](https://img.shields.io/packagist/v/empire2/gaze-ticketsystem.svg)](https://packagist.org/packages/empire2/gaze-ticketsystem)
@@ -19,7 +19,7 @@ The package ships:
 
 - PHP `^8.2`
 - Laravel `^12.0` (`laravel/ai` requires Laravel 12+)
-- Livewire `^3.5`
+- Livewire `^4.0`
 - `empiretwo/gaze-laravel` (auto-installed)
 - `spatie/laravel-activitylog` `^4.8`
 - `spatie/laravel-medialibrary` `^11.3`

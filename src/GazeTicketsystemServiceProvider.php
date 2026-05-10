@@ -71,13 +71,13 @@ class GazeTicketsystemServiceProvider extends ServiceProvider
             return;
         }
 
-        Livewire::component('gaze-ticketsystem::ticket-board', TicketBoard::class);
-        Livewire::component('gaze-ticketsystem::ticket-kanban', TicketKanban::class);
-        Livewire::component('gaze-ticketsystem::ticket-create', TicketCreate::class);
-        Livewire::component('gaze-ticketsystem::ticket-create-modal', TicketCreateModal::class);
-        Livewire::component('gaze-ticketsystem::ticket-show', TicketShow::class);
-        Livewire::component('gaze-ticketsystem::ticket-settings', TicketSettings::class);
-        Livewire::component('gaze-ticketsystem::toast', Toast::class);
+        Livewire::component('gaze-ticketsystem.ticket-board', TicketBoard::class);
+        Livewire::component('gaze-ticketsystem.ticket-kanban', TicketKanban::class);
+        Livewire::component('gaze-ticketsystem.ticket-create', TicketCreate::class);
+        Livewire::component('gaze-ticketsystem.ticket-create-modal', TicketCreateModal::class);
+        Livewire::component('gaze-ticketsystem.ticket-show', TicketShow::class);
+        Livewire::component('gaze-ticketsystem.ticket-settings', TicketSettings::class);
+        Livewire::component('gaze-ticketsystem.toast', Toast::class);
     }
 
     private function registerPublishing(): void

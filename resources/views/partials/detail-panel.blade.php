@@ -31,6 +31,6 @@
     </div>
 
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
-        <livewire:gaze-ticketsystem::ticket-show :ticket="$ticket" :key="'ticket-show-'.$ticket->id" />
+        <livewire:gaze-ticketsystem.ticket-show :ticket="$ticket" :key="'ticket-show-'.$ticket->id" />
     </div>
 </div>

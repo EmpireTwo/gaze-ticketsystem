@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- Initial extraction from EmpireTwo/Dashboard.
 - Livewire admin board (kanban + list + split-view detail panel) under `/tickets`.
 - `Ticket`, `TicketComment`, `TicketStatus`, `TicketType` models with auto-generated `TK-YYYYMM-NNNNN` ticket numbers, Spatie activity log + media library integration.
 - `Priority` enum with German labels, badge classes, colors and icons.
